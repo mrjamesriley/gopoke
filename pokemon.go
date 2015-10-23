@@ -1,6 +1,3 @@
-// Simple program to experiment with a few of the basic features of Golang
-// Here we replicate the commencement of the Pokemon Red/Blue journey
-// From giving yourself a name, to selecting your first Pokemon
 // Usage: go run pokemon.go
 package main
 
@@ -199,13 +196,3 @@ func main() {
   }
 
 }
-
-* 20% chance of attack missing or being ignored
-* Pokemon to have a level, earning experience points upon winning a fight
-* After fighting rival, you can choose to walk in the grass, fighting a random pokemon
-* You have the ability to save your progress, recording your pokemons stats
-* You start the game with 2x potions, which you can use to replenish your health by X hp
-* You can give your name, and you specify the name of your rival
-* Write tests for the structs
-* The option to take on the gym leader, a battle with a stronger team (where you'll need to train your pokemon up before heading there)
-* Beginnings of a online multiplayer where you can take on others

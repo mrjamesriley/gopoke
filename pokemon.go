@@ -6,6 +6,8 @@ import (
   "strconv"
   "os"
   "os/exec"
+  "math/rand"
+  "time"
 )
 
 // structs are the closest Go gets to a Class, grouping data to form records
@@ -21,15 +23,28 @@ type pokemon struct {
   fainted bool
 }
 
+func random(min, max int) int {
+  return rand.Intn(max - min) + min
+}
+
+func ignoreAttack() bool {
+  return random(1,5) == 3
+}
+
+
 func (p *pokemon) attack(enemy *pokemon) {
- fmt.Println(p.name, "did", strconv.Itoa(p.strength), "HP of damage")
- enemy.hp = enemy.hp - p.strength
- fmt.Println(enemy.name, "now has", enemy.hp, "HP left")
- if(enemy.hp <= 0) {
-   enemy.hp = 0
-   enemy.fainted = true
-   fmt.Println(enemy.name, "has fainted!")
- }
+  if(ignoreAttack()) {
+    fmt.Println(p.name, "ignored your commands...")
+  } else {
+    fmt.Println(p.name, "did", strconv.Itoa(p.strength), "HP of damage")
+    enemy.hp = enemy.hp - p.strength
+    fmt.Println(enemy.name, "now has", enemy.hp, "HP left")
+    if(enemy.hp <= 0) {
+      enemy.hp = 0
+      enemy.fainted = true
+      fmt.Println(enemy.name, "has fainted!")
+    }
+  }
 }
 
 type pokeGym struct {
@@ -64,7 +79,7 @@ func selectPokemon(selection pokemon, player *player) {
   player.pokemon = selection
   fmt.Println("\n" + player.name, "selected", player.pokemon.name + "!")
   fmt.Println(player.pokemon.name, "has", strconv.Itoa(player.pokemon.hp),
-    "HP and a Strength of", player.pokemon.strength)
+  "HP and a Strength of", player.pokemon.strength)
 }
 
 func clearScreen() {
@@ -73,11 +88,23 @@ func clearScreen() {
   c.Run()
 }
 
+func askPlayer(question string) string {
+  var usersResponse string;
+  fmt.Println(question)
+  _, err := fmt.Scanln(&usersResponse)
+  if(err != nil) { fmt.Println("Err has the value: ", err) }
+  return usersResponse;
+}
+
 func main() {
 
-  // maps are Go's associative data type (i.e hash)
-  playerOne := player{ name: "James" }
-  playerTwo := player{ name: "Gary" }
+  rand.Seed(time.Now().Unix())
+
+  playerOneName := askPlayer("What was your name again?")
+  playerTwoName := askPlayer("... and what did you say your Rivals name was?")
+
+  playerOne := player{ name: playerOneName }
+  playerTwo := player{ name: playerTwoName }
 
   charmander := pokemon{name: "Charmander", strength: 4, hp: 20, fainted: false }
   squirtle   := pokemon{name: "Squirtle", strength: 10, hp: 20, fainted: false }
@@ -103,10 +130,7 @@ func main() {
   selectingPokemon := true
   for selectingPokemon {
 
-    var usersChoice string
-    fmt.Println("Which starting Pokemon would you like? \n")
-    _, err := fmt.Scanln(&usersChoice)
-    if(err != nil) { fmt.Println("Err has the value: ", err) }
+    usersChoice := askPlayer("Which starting Pokemon would you like? \n")
 
     if(pokemonIsAvailable(usersChoice, pokedex)) {
       selectPokemon(pokemonByName(usersChoice, pokedex), &playerOne)
